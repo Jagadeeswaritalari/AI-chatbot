@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            color: #4a5568;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+        
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .error {
+            color: #e53e3e;
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            min-height: 1.2rem;
+            text-align: left;
+        }
+        
+        .error.visible {
+            display: block;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .success {
+            color: #2f855a;
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 1.5rem;
+        }
+        
+        .accessibility-note {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">NexusAI</div>
+        <p class="subtitle">Secure access to your intelligent assistant</p>
+        
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    autocomplete="email" 
+                    aria-required="true"
+                    required
+                >
+                <div id="emailError" class="error" role="alert"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    autocomplete="current-password"
+                    aria-required="true"
+                    required
+                >
+                <div id="passwordError" class="error" role="alert"></div>
+            </div>
+            
+            <button type="submit" id="loginBtn">Sign In to Chatbot</button>
+            <div id="successMessage" class="success"></div>
+        </form>
+        
+        <p class="accessibility-note">
+            <strong>Security Note:</strong> For production, always use HTTPS and server-side validation. 
+            This frontend validation prevents unnecessary server requests but <em>never</em> replaces backend security.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            const successMessage = document.getElementById('successMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Real-time validation
+            emailInput.addEventListener('input', validateEmail);
+            passwordInput.addEventListener('input', validatePassword);
+            
+            // Form submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Reset messages
+                emailError.textContent = '';
+                passwordError.textContent = '';
+                successMessage.textContent = '';
+                emailError.classList.remove('visible');
+                passwordError.classList.remove('visible');
+                
+                // Validate all fields
+                const isEmailValid = validateEmail();
+                const isPasswordValid = validatePassword();
+                
+                if (!isEmailValid || !isPasswordValid) {
+                    // Show all errors at once
+                    if (!isEmailValid) emailError.classList.add('visible');
+                    if (!isPasswordValid) passwordError.classList.add('visible');
+                    return;
+                }
+                
+                // Disable button during submission
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Authenticating...';
+                
+                try {
+                    // ⚠️ PRODUCTION NOTE: 
+                    // Replace with actual API call to your backend:
+                    // const response = await fetch('/api/auth/login', {
+                    //     method: 'POST',
+                    //     headers: {'Content-Type': 'application/json'},
+                    //     body: JSON.stringify({email: emailInput.value.trim(), password: passwordInput.value})
+                    // });
+                    
+                    // SIMULATED SUCCESS (replace with real auth logic)
+                    await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate network delay
+                    
+                    // For demo: accept any @example.com email with 8+ char password
+                    const isDemoValid = 
+                        emailInput.value.trim().endsWith('@example.com') && 
+                        passwordInput.value.length >= 8;
+                    
+                    if (isDemoValid) {
+                        // Show success state
+                        successMessage.textContent = '✓ Login successful! Redirecting to chatbot...';
+                        successMessage.style.color = '#2f855a';
+                        
+                        // In real app: save token, redirect to chat interface
+                        // localStorage.setItem('authToken', response.token);
+                        // window.location.href = '/chatbot';
+                        
+                        // Demo redirect after delay
+                        setTimeout(() => {
+                            alert(`Authenticated as ${emailInput.value.trim()}\n\nIn a real implementation, you'd be redirected to the chatbot interface with personalized context for accurate responses.`);
+                            // Reset form for demo purposes
+                            form.reset();
+                        }, 1500);
+                    } else {
+                        throw new Error('Invalid credentials. Use any @example.com email with 8+ character password for demo.');
+                    }
+                } catch (error) {
+                    // Show user-friendly error
+                    emailError.textContent = error.message || 'Authentication failed. Please check credentials.';
+                    emailError.classList.add('visible');
+                } finally {
+                    // Re-enable button
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In to Chatbot';
+                }
+            });
+            
+            // Validation functions
+            function validateEmail() {
+                const email = emailInput.value.trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                if (!email) {
+                    showError(emailError, 'Email is required');
+                    return false;
+                }
+                
+                if (!emailRegex.test(email)) {
+                    showError(emailError, 'Please enter a valid email address');
+                    return false;
+                }
+                
+                clearError(emailError);
+                return true;
+            }
+            
+            function validatePassword() {
+                const password = passwordInput.value;
+                
+                if (!password) {
+                    showError(passwordError, 'Password is required');
+                    return false;
+                }
+                
+                if (password.length < 8) {
+                    showError(passwordError, 'Password must be at least 8 characters');
+                    return false;
+                }
+                
+                // Optional: Add more checks (uppercase, number, etc.)
+                clearError(passwordError);
+                return true;
+            }
+            
+            function showError(element, message) {
+                element.textContent = message;
+                element.classList.add('visible');
+                element.setAttribute('aria-live', 'polite');
+            }
+            
+            function clearError(element) {
+                element.textContent = '';
+                element.classList.remove('visible');
+                element.removeAttribute('aria-live');
+            }
+            
+            // Initialize with empty errors hidden
+            emailError.classList.remove('visible');
+            passwordError.classList.remove('visible');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 420px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            color: #4a5568;
+            margin-bottom: 2rem;
+            font-size: 1.05rem;
+        }
+        
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #718096;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            transition: color 0.2s;
+        }
+        
+        .password-toggle:hover {
+            color: #2d3748;
+            background-color: #edf2f7;
+        }
+        
+        .password-toggle:focus {
+            outline: 2px solid #4361ee;
+            outline-offset: 2px;
+        }
+        
+        .password-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .error {
+            color: #e53e3e;
+            font-size: 0.85rem;
+            margin-top: 0.4rem;
+            min-height: 1.2rem;
+            text-align: left;
+        }
+        
+        .error.visible {
+            display: block;
+        }
+        
+        button[type="submit"] {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        
+        button[type="submit"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+        }
+        
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+        
+        button[type="submit"]:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .success {
+            color: #2f855a;
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 1.5rem;
+        }
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem;
+                margin: 10px;
+            }
+            input {
+                padding: 12px 36px 12px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">AI-CHATBOT</div>
+        <p class="subtitle">Secure access to your intelligent assistant</p>
+        
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input 
+                    type="text" 
+                    id="email" 
+                    name="email" 
+                    autocomplete="email" 
+                    aria-required="true"
+                    required
+                    placeholder="Enter valid email or username"
+                >
+                <div id="emailError" class="error" role="alert"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-container">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        autocomplete="current-password"
+                        aria-required="true"
+                        required
+                    >
+                    <button 
+                        type="button" 
+                        id="togglePassword" 
+                        class="password-toggle"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                    >
+                        <!-- Eye icon (default: closed eye) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="passwordError" class="error" role="alert"></div>
+            </div>
+            
+            <button type="submit" id="loginBtn">Sign In to Chatbot</button>
+            <div id="successMessage" class="success"></div>
+        </form>
+        
+        <p class="accessibility-note">
+            <strong>Note:</strong> .Enter  valid email to login.Accept only valid credentials.
+            For demo: Use any email with 8+ character password.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Password toggle functionality
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeClosed = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>`;
+            const eyeOpen = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A4.5 4.5 0 1012 11a4.5 4.5 0 00-5.468-4.316M3 3l3.59 3.59m7.198 7.198L17.41 17.41" />
+            </svg>`;
+
+            let isPasswordVisible = false;
+            
+            togglePassword.addEventListener('click', () => {
+                isPasswordVisible = !isPasswordVisible;
+                passwordInput.type = isPasswordVisible ? 'text' : 'password';
+                
+                togglePassword.innerHTML = isPasswordVisible ? eyeOpen : eyeClosed;
+                togglePassword.setAttribute('aria-label', isPasswordVisible ? 'Hide password' : 'Show password');
+                togglePassword.setAttribute('aria-pressed', isPasswordVisible.toString());
+                
+                passwordInput.focus();
+            });
+            
+            togglePassword.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    togglePassword.click();
+                }
+            });
+
+            // Form validation and submission logic
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            const successMessage = document.getElementById('successMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            emailInput.addEventListener('input', validateEmail);
+            passwordInput.addEventListener('input', validatePassword);
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                emailError.textContent = '';
+                passwordError.textContent = '';
+                successMessage.textContent = '';
+                emailError.classList.remove('visible');
+                passwordError.classList.remove('visible');
+                
+                const isEmailValid = validateEmail();
+                const isPasswordValid = validatePassword();
+                
+                if (!isEmailValid || !isPasswordValid) {
+                    if (!isEmailValid) emailError.classList.add('visible');
+                    if (!isPasswordValid) passwordError.classList.add('visible');
+                    return;
+                }
+                
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Authenticating...';
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 1200));
+                    
+                    // ✅ NO EMAIL RESTRICTIONS - Accepts ANY email input
+                    const isDemoValid = passwordInput.value.length >= 8;
+                    
+                    if (isDemoValid) {
+                        successMessage.textContent = '✓ Login successful! Redirecting to chatbot...';
+                        successMessage.style.color = '#2f855a';
+                        
+                    } else {
+                        throw new Error('Invalid credentials. Password must be at least 8 characters.');
+                    }
+                } catch (error) {
+                    emailError.textContent = error.message || 'Authentication failed. Please check credentials.';
+                    emailError.classList.add('visible');
+                } finally {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'Sign In to Chatbot';
+                }
+            });
+            
+            // ✅ MINIMAL EMAIL VALIDATION - Only checks if field is not empty
+            function validateEmail() {
+                const email = emailInput.value.trim();
+                
+                if (!email) {
+                    showError(emailError, 'Email/Username is required');
+                    return false;
+                }
+                
+                // ✅ NO FORMAT CHECKING - Accepts any text
+                clearError(emailError);
+                return true;
+            }
+            
+            function validatePassword() {
+                const password = passwordInput.value;
+                
+                if (!password) {
+                    showError(passwordError, 'Password is required');
+                    return false;
+                }
+                
+                if (password.length < 8) {
+                    showError(passwordError, 'Password must be at least 8 characters');
+                    return false;
+                }
+                
+                clearError(passwordError);
+                return true;
+            }
+            
+            function showError(element, message) {
+                element.textContent = message;
+                element.classList.add('visible');
+                element.setAttribute('aria-live', 'polite');
+            }
+            
+            function clearError(element) {
+                element.textContent = '';
+                element.classList.remove('visible');
+                element.removeAttribute('aria-live');
+            }
+            
+            togglePassword.innerHTML = eyeClosed;
+        });
+    </script>
+</body>
+</html>
+<!-- Add this BEFORE the closing </body> tag in your existing login page -->
+
+<!-- Chatbot Interface (Hidden initially) -->
+<div id="chatbotContainer" class="chatbot-container hidden">
+    <div class="chat-header">
+        <div class="chat-avatar">🤖</div>
+        <div class="chat-info">
+            <h2>AI-CHATBOT Assistant</h2>
+            <p class="status">Online • Ready to help</p>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+    
+    <div id="chatMessages" class="chat-messages">
+        <!-- Messages will appear here dynamically -->
+    </div>
+    
+    <div class="chat-input-container">
+        <div class="input-wrapper">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Type your message here..." 
+                autocomplete="off"
+                aria-label="Chat input"
+            >
+            <button id="sendBtn" class="send-btn" aria-label="Send message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Chatbot Container Styles */
+    .chatbot-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        max-width: 800px;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .chatbot-container.hidden {
+        display: none;
+    }
+
+    /* Chat Header */
+    .chat-header {
+        background: linear-gradient(45deg, #4361ee, #3a0ca3);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .chat-avatar {
+        font-size: 2.5rem;
+        margin-right: 1rem;
+    }
+
+    .chat-info h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .status {
+        font-size: 0.85rem;
+        opacity: 0.9;
+    }
+
+    .logout-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+    }
+
+    /* Chat Messages Area */
+    .chat-messages {
+        flex: 1;
+        padding: 1.5rem;
+        overflow-y: auto;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    .message {
+        max-width: 80%;
+        padding: 1rem 1.2rem;
+        border-radius: 18px;
+        line-height: 1.5;
+        animation: fadeIn 0.3s ease;
+        position: relative;
+        word-wrap: break-word;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bot-message {
+        align-self: flex-start;
+        background: white;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .user-message {
+        align-self: flex-end;
+        background: linear-gradient(45deg, #4361ee, #3a0ca3);
+        color: white;
+        box-shadow: 0 3px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    .message-time {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-top: 0.4rem;
+        text-align: right;
+    }
+
+    .typing-indicator {
+        align-self: flex-start;
+        background: white;
+        border: 1px solid #e2e8f0;
+        padding: 1rem;
+        border-radius: 18px;
+        display: inline-block;
+    }
+
+    .typing-indicator span {
+        height: 8px;
+        width: 8px;
+        background: #4a5568;
+        display: inline-block;
+        border-radius: 50%;
+        margin: 0 1px;
+        animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    /* Chat Input */
+    .chat-input-container {
+        padding: 1.2rem;
+        background: white;
+        border-top: 2px solid #e2e8f0;
+    }
+
+    .input-wrapper {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .input-wrapper input {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: 2px solid #cbd5e0;
+        border-radius: 25px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .input-wrapper input:focus {
+        border-color: #4361ee;
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+
+    .send-btn {
+        background: linear-gradient(45deg, #4361ee, #3a0ca3);
+        color: white;
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.4);
+    }
+
+    .send-btn:active {
+        transform: scale(0.95);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .chatbot-container {
+            height: 100vh;
+            max-width: 100%;
+            margin: 0;
+            border-radius: 0;
+        }
+        
+        .message {
+            max-width: 90%;
+        }
+        
+        .chat-header {
+            padding: 1rem;
+        }
+        
+        .chat-avatar {
+            font-size: 2rem;
+        }
+        
+        .input-wrapper input {
+            padding: 0.9rem 1.2rem;
+        }
+    }
+</style>
+
+<script>
+    // Chatbot State Management
+    let chatState = {
+        isLoggedIn: false,
+        userName: '',
+        conversationStage: 'greeting', // greeting -> requirements -> discussion -> completed
+        requirements: {
+            projectType: '',
+            timeline: '',
+            budget: '',
+            features: [],
+            preferences: ''
+        },
+        messageHistory: [],
+        isTyping: false
+    };
+
+    // DOM Elements
+    const chatbotContainer = document.getElementById('chatbotContainer');
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginContainer = document.querySelector('.login-container');
+
+    // Initialize Chatbot after DOM loads
+    document.addEventListener('DOMContentLoaded', () => {
+        // Setup event listeners for chat
+        sendBtn.addEventListener('click', handleUserMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserMessage();
+        });
+        
+        logoutBtn.addEventListener('click', logoutUser);
+    });
+
+    // Modified Login Success Handler (replace existing success handler in your login code)
+    function handleLoginSuccess(email) {
+        // Hide login, show chatbot
+        loginContainer.classList.add('hidden');
+        chatbotContainer.classList.remove('hidden');
+        
+        // Set user info
+        chatState.isLoggedIn = true;
+        chatState.userName = email.split('@')[0] || email;
+        
+        // Start conversation with greeting
+        setTimeout(() => {
+            addBotMessage(`Hello ${chatState.userName}! 👋`, false);
+            setTimeout(() => {
+                addBotMessage("I'm AI-CHATBOT, your intelligent assistant. I'm here to help you with your project requirements.", false);
+                setTimeout(() => {
+                    startRequirementsCollection();
+                }, 800);
+            }, 600);
+        }, 500);
+        
+        // Focus on input field
+        userInput.focus();
+    }
+
+    // Start collecting requirements
+    function startRequirementsCollection() {
+        chatState.conversationStage = 'requirements';
+        addBotMessage("Let's start by understanding your project needs. I'll ask you a few questions to get the perfect solution for you.", false);
+        
+        setTimeout(() => {
+            askNextRequirement();
+        }, 1000);
+    }
+
+    // Ask questions sequentially
+    function askNextRequirement() {
+        const questions = [
+            { key: 'projectType', question: "What type of project are you working on? (e.g., Website, Mobile App, Software, AI Solution, etc.)" },
+            { key: 'timeline', question: "What's your expected timeline for completion? (e.g., 1 week, 1 month, 3 months, etc.)" },
+            { key: 'budget', question: "Do you have a budget range in mind? (e.g., $1000-$5000, Flexible, etc.)" },
+            { key: 'features', question: "What are the key features or functionalities you need? (List the main ones)" },
+            { key: 'preferences', question: "Any specific preferences, technologies, or constraints I should know about?" }
+        ];
+
+        const currentIndex = Object.values(chatState.requirements).filter(v => v).length;
+        
+        if (currentIndex < questions.length) {
+            const currentQuestion = questions[currentIndex];
+            addBotMessage(currentQuestion.question, true);
+        } else {
+            // All requirements collected
+            summarizeRequirements();
+        }
+    }
+
+    // Handle user messages
+    function handleUserMessage() {
+        const message = userInput.value.trim();
+        
+        if (!message || chatState.isTyping) return;
+        
+        // Add user message to chat
+        addUserMessage(message);
+        userInput.value = '';
+        
+        // Process based on conversation stage
+        setTimeout(() => {
+            processUserResponse(message);
+        }, 600);
+    }
+
+    // Add user message to chat
+    function addUserMessage(text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message user-message';
+        messageDiv.innerHTML = `<div>${text}</div>
+                               <div class="message-time">${getCurrentTime()}</div>`;
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // Add bot message with typing indicator
+    function addBotMessage(text, showTyping = true) {
+        if (showTyping) {
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot-message';
+                messageDiv.innerHTML = `<div>${text}</div>
+                                       <div class="message-time">${getCurrentTime()}</div>`;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }, 1500 + Math.random() * 1000);
+        } else {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.innerHTML = `<div>${text}</div>
+                                   <div class="message-time">${getCurrentTime()}</div>`;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+    }
+
+    // Show typing indicator
+    function showTypingIndicator() {
+        if (chatState.isTyping) return;
+        
+        chatState.isTyping = true;
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message typing-indicator';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = '<span></span><span></span><span></span>';
+        chatMessages.appendChild(typingDiv);
+        scrollToBottom();
+    }
+
+    // Hide typing indicator
+    function hideTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+        chatState.isTyping = false;
+    }
+
+    // Process user response based on conversation stage
+    function processUserResponse(response) {
+        if (chatState.conversationStage === 'requirements') {
+            saveRequirement(response);
+            askNextRequirement();
+        } else if (chatState.conversationStage === 'discussion') {
+            handleDiscussion(response);
+        }
+    }
+
+    // Save requirement and move to next
+    function saveRequirement(response) {
+        const requirementsKeys = Object.keys(chatState.requirements);
+        const currentIndex = requirementsKeys.findIndex(key => !chatState.requirements[key]);
+        
+        if (currentIndex !== -1) {
+            const key = requirementsKeys[currentIndex];
+            chatState.requirements[key] = response;
+        }
+    }
+
+    // Summarize collected requirements
+    function summarizeRequirements() {
+        chatState.conversationStage = 'discussion';
+        
+        const summary = `
+        📋 <strong>Perfect! Here's what I've understood about your project:</strong><br><br>
+        <strong>Project Type:</strong> ${chatState.requirements.projectType}<br>
+        <strong>Timeline:</strong> ${chatState.requirements.timeline}<br>
+        <strong>Budget:</strong> ${chatState.requirements.budget}<br>
+        <strong>Key Features:</strong> ${chatState.requirements.features}<br>
+        <strong>Preferences:</strong> ${chatState.requirements.preferences}<br><br>
+        
+        Does this summary look correct? Or would you like to modify anything?
+        `;
+        
+        addBotMessage(summary, true);
+    }
+
+    // Handle discussion phase
+    function handleDiscussion(response) {
+        const lowerResponse = response.toLowerCase();
+        
+        if (lowerResponse.includes('yes') || lowerResponse.includes('correct') || lowerResponse.includes('good')) {
+            addBotMessage("Excellent! 🎉 Based on your requirements, I can provide you with tailored recommendations and next steps. What specific aspect would you like to discuss first?", true);
+        } else if (lowerResponse.includes('no') || lowerResponse.includes('wrong') || lowerResponse.includes('change')) {
+            addBotMessage("No problem! Which part would you like to modify? You can say things like 'change project type', 'update timeline', 'modify features', etc.", true);
+        } else if (lowerResponse.includes('change') || lowerResponse.includes('modify') || lowerResponse.includes('update')) {
+            // Handle specific modifications
+            if (lowerResponse.includes('project')) {
+                addBotMessage("What's the correct project type?", true);
+                chatState.conversationStage = 'modify_project';
+            } else if (lowerResponse.includes('timeline')) {
+                addBotMessage("What's the updated timeline?", true);
+                chatState.conversationStage = 'modify_timeline';
+            } else if (lowerResponse.includes('budget')) {
+                addBotMessage("What's the correct budget range?", true);
+                chatState.conversationStage = 'modify_budget';
+            } else if (lowerResponse.includes('features')) {
+                addBotMessage("What are the updated features?", true);
+                chatState.conversationStage = 'modify_features';
+            } else if (lowerResponse.includes('preferences')) {
+                addBotMessage("What are the updated preferences?", true);
+                chatState.conversationStage = 'modify_preferences';
+            } else {
+                addBotMessage("I can help you modify any part. Just tell me what you'd like to change!", true);
+            }
+        } else if (chatState.conversationStage.startsWith('modify_')) {
+            // Handle modification
+            const field = chatState.conversationStage.split('_')[1];
+            chatState.requirements[field] = response;
+            chatState.conversationStage = 'discussion';
+            addBotMessage("Updated! Here's your revised summary. Would you like to make any other changes or shall we proceed?", true);
+            setTimeout(summarizeRequirements, 800);
+        } else {
+            // General discussion
+            const intelligentResponse = generateIntelligentResponse(response);
+            addBotMessage(intelligentResponse, true);
+        }
+    }
+
+    // Generate intelligent responses
+    function generateIntelligentResponse(userMessage) {
+        const lowerMsg = userMessage.toLowerCase();
+        
+        // Keywords for different responses
+        const responses = {
+            'help': "I'm here to help! Based on your requirements, I can assist with project planning, technology recommendations, timeline estimation, and more. What specific help do you need?",
+            'recommendation': "Based on your project type and requirements, I'd recommend considering modern technologies like React/Angular for web, Flutter/React Native for mobile, or Python/TensorFlow for AI solutions. Would you like me to elaborate on any specific technology?",
+            'timeline': `With your timeline of ${chatState.requirements.timeline}, we can create a realistic project plan. Typically, we'd break it down into phases: planning (1-2 weeks), development (4-8 weeks), testing (1-2 weeks), and deployment. Does this align with your expectations?`,
+            'budget': `Your budget of ${chatState.requirements.budget} gives us good flexibility. We can prioritize essential features first and add enhancements later if needed. Would you like me to suggest a budget allocation breakdown?`,
+            'features': "The features you mentioned are great! I can help you prioritize them into must-have, should-have, and nice-to-have categories. This helps in creating a minimum viable product (MVP) first. Shall we do that?",
+            'next steps': "Great question! Next steps would be: 1) Finalize requirements document, 2) Create project timeline, 3) Set up development environment, 4) Begin development phase. Which step would you like to start with?",
+            'thank': "You're very welcome! 😊 I'm here to make your project journey smooth and successful. Feel free to ask anything about your project requirements!",
+            'bye': "It was great helping you today! Remember, you can always come back to discuss more about your project. Have a wonderful day! 👋"
+        };
+        
+        // Find matching response
+        for (const [keyword, response] of Object.entries(responses)) {
+            if (lowerMsg.includes(keyword)) {
+                return response;
+            }
+        }
+        
+        // Default intelligent response
+        return "That's a great point! Based on your project requirements, I think we should focus on creating a solid foundation first. Would you like me to suggest a detailed action plan or discuss any specific aspect of your project?";
+    }
+
+    // Get current time for messages
+    function getCurrentTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Scroll to bottom of chat
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Logout function
+    function logoutUser() {
+        // Reset chat state
+        chatState = {
+            isLoggedIn: false,
+            userName: '',
+            conversationStage: 'greeting',
+            requirements: {
+                projectType: '',
+                timeline: '',
+                budget: '',
+                features: [],
+                preferences: ''
+            },
+            messageHistory: [],
+            isTyping: false
+        };
+        
+        // Clear chat messages
+        chatMessages.innerHTML = '';
+        
+        // Hide chatbot, show login
+        chatbotContainer.classList.add('hidden');
+        loginContainer.classList.remove('hidden');
+        
+        // Reset form
+        document.getElementById('loginForm').reset();
+    }
+
+    // Update your existing login success handler to call this function:
+    // Replace the setTimeout block in your login success with:
+    /*
+    setTimeout(() => {
+        handleLoginSuccess(emailInput.value.trim());
+    }, 1500);
+    */
+</script>

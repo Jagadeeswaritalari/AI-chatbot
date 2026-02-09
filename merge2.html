@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chatbot</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    padding: 2rem;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #3a0ca3;
+}
+
+/* LOGIN */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(45deg, #4361ee, #3a0ca3);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* CHAT */
+#chatBox {
+    display: none;
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.message {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    max-width: 80%;
+    font-size: 0.95rem;
+}
+
+.bot {
+    background: #edf2ff;
+    align-self: flex-start;
+}
+
+.user {
+    background: #4361ee;
+    color: white;
+    align-self: flex-end;
+}
+
+.chat-input {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input input {
+    flex: 1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGIN SECTION -->
+    <div id="loginSection">
+        <div class="logo">AI-CHATBOT</div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Email / Username</label>
+                <input type="text" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+
+    <!-- CHAT SECTION -->
+    <div id="chatBox">
+        <div class="logo">Chat</div>
+
+        <div id="messages"></div>
+
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+const loginForm = document.getElementById("loginForm");
+const loginSection = document.getElementById("loginSection");
+const chatBox = document.getElementById("chatBox");
+const messages = document.getElementById("messages");
+const userInput = document.getElementById("userInput");
+
+loginForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const password = document.getElementById("password").value;
+    // Check session storage
+if(sessionStorage.getItem('loginSuccess') === 'true') {
+    document.getElementById('successMessage').textContent = "Login successfully";
+    sessionStorage.removeItem('loginSuccess');
+} else {
+        alert("Password must be at least 8 characters");
+    }
+});
+
+  
+</script>
+
+</body>
+</html>
